@@ -4,8 +4,8 @@
   "description": "V2",
   "main": "",
   "scripts": {
-    "build": "webpack --env.build --env.isMinimize",
-    "dev": "webpack-dev-server  --env.dev --env.isDebug",
+    "build": "webpack --env.build",
+    "dev": "webpack-dev-server  --env.dev",
     "dist": "webpack"
   },
   "dependencies": {

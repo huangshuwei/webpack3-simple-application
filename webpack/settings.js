@@ -7,7 +7,7 @@ exports.getSettings = function (env) {
         proxyTarget:'http://localhost:2246/',
 
         // 当前启动的端口
-        visitPort:'8055',
+        visitPort:'8056',
 
         // 是否调试模式
         isDebug:false,
@@ -48,7 +48,7 @@ exports.getSettings = function (env) {
         settings.outputFolderName = 'dist';
 
         settings.path.outputPath = "./";
-        settings.path.publicPath = "/webpack3-demo/"
+        settings.path.publicPath = "/webpack3-simple-app/"
 
     }else if (env && env.build){
 

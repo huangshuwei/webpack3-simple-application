@@ -32,7 +32,7 @@ module.exports = function (env) {
 
     var entry = {
         vendor: "./libs/vendor.js", // vendor reference file(s)
-        index: "./src/js/index.js" // application code
+        index: "./app/index.js" // application code
     };
 
     var output = {
@@ -43,30 +43,51 @@ module.exports = function (env) {
 
     var rules = [
 
+        // babel-loader
+        {
+            test: /\.js$/,
+            use: 'babel-loader',
+            exclude: /node_modules/
+        },
+
+        // vue loader
+        {
+            test: /\.vue$/,
+            use: [
+                {
+                    loader: 'vue-loader',
+                    options: {
+                        extractCSS: true
+                    }
+                }
+            ]
+
+        },
+
         // css loader
         {
             test: /\.css$/,
-            use: ExtractTextPlugin.extract({
-                use: SETTINGS.isMinimize ? 'css-loader?minimize' : 'css-loader'
-            })
+            use: SETTINGS.isDebug ?
+                ['style-loader', 'css-loader'] :
+                ExtractTextPlugin.extract({
+                    use: SETTINGS.isMinimize ? 'css-loader?minimize' : 'css-loader'
+                })
         },
 
         // img loader
         {
             test: /\.(png|gif|jpe?g)(\?\S*)?$/,
-            use: [
-                {
-                    loader: 'url-loader',
-                    options: {
-                        /*
-                         *  limit=10000 ： 10kb
-                         *  图片小于10kb 采用内联的形式，否则输出图片
-                         * */
-                        limit: 10000,
-                        name: 'images/[name]-[hash:8].[ext]'
-                    }
+            use: [{
+                loader: 'url-loader',
+                options: {
+                    /*
+                     *  limit=10000 ： 10kb
+                     *  图片小于10kb 采用内联的形式，否则输出图片
+                     * */
+                    limit: 10000,
+                    name: 'images/[name]-[hash:8].[ext]'
                 }
-            ]
+            }]
         },
 
         // font loader
@@ -118,22 +139,6 @@ module.exports = function (env) {
             basePath: ''
         }),
 
-        // 将css 提取到单独的文件中
-        new ExtractTextPlugin('css/[name]-[contenthash:8].css'),
-
-        // 创建html
-        new HtmlWebpackPlugin({
-            filename: 'index.html',
-            template: __dirname + '/src/index.html',
-            inject: 'true',
-
-            // 需要依赖的模块
-            chunks: ['index', 'vendor', 'manifest'],
-
-            // 根据依赖自动排序
-            chunksSortMode: 'dependency'
-        }),
-
         // 全局标识
         new webpack.DefinePlugin({
             // 开发标识
@@ -161,28 +166,46 @@ module.exports = function (env) {
             dry: false, // Do not delete anything, good for testing.
         }),
 
+        // 创建html
+        new HtmlWebpackPlugin({
+            filename: 'index.html',
+            template: __dirname + '/app/index.html',
+            inject: 'true',
+
+            // 需要依赖的模块
+            chunks: ['index', 'vendor', 'manifest'],
+
+            // 根据依赖自动排序
+            chunksSortMode: 'dependency'
+        })
 
     ];
 
     var resolve = {
         extensions: ['.js', '.css', '.scss', '.ejs', '.png', '.jpg', '.vue'],
-        modules: [SETTINGS.path.node_modulesPath]
+        modules: [SETTINGS.path.node_modulesPath],
+        alias: {
+            'vue$': 'vue/dist/vue'
+        }
     }
 
     var devServer = {};
 
     if (SETTINGS.isDebug) {
+
+
         // 启用 HMR
         plugins.push(new webpack.HotModuleReplacementPlugin());
 
         // 编译完成自动打开浏览器
         plugins.push(new OpenBrowserPlugin({url: 'http://localhost:' + SETTINGS.visitPort + SETTINGS.path.publicPath + 'index.html'}));
 
+
         devServer = {
             hot: true, // 告诉 dev-server 我们在使用 HMR
             contentBase: path.join(__dirname, SETTINGS.path.outputPath, SETTINGS.outputFolderName),
             publicPath: SETTINGS.path.publicPath,
-            port:SETTINGS.visitPort,
+            port: SETTINGS.visitPort,
             compress: true,
             inline: true,
             stats: "errors-only",
@@ -196,10 +219,15 @@ module.exports = function (env) {
                     /*
                      * rewrite 的方式扩展性更强，不限制服务的名称
                      * */
-                    pathRewrite: { '^/devApi': '' }
+                    pathRewrite: {'^/devApi': ''}
                 }
             }
         }
+    } else {
+
+        // 将css 提取到单独的文件中
+        plugins.push(new ExtractTextPlugin('css/[name]-[contenthash:8].css'))
+
     }
 
     if (SETTINGS.isMinimize) {
