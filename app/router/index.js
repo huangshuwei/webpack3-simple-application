@@ -3,20 +3,21 @@ import VueRouter from "vue-router";
 
 
 // 舆情资讯
-const home = r => require.ensure([], () => r(require('../components/home.vue')), 'home');
-
+const intro = r => require.ensure([], () => r(require('../components/intro.vue')), 'intro');
+const test = r => require.ensure([], () => r(require('../components/test.vue')), 'test');
 
 Vue.use(VueRouter)
 
 export default new VueRouter({
     linkActiveClass: '',
     routes: [
-        { path: '/', redirect: '/home' }, // 默认路由
-        { path: '/home', component: home },
+        { path: '/', redirect: '/intro' }, // 默认路由
+        { path: '/intro', component: intro },
+        { path: '/test', component: test },
 
         {
             path: '*',
-            redirect: '/home'
+            redirect: '/intro'
         }
         /*  {
          path: '*', component: {

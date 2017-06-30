@@ -31,8 +31,13 @@ module.exports = function (env) {
 
 
     var entry = {
-        vendor: "./libs/vendor.js", // vendor reference file(s)
-        index: "./app/index.js" // application code
+        index: "./app/index.js", // application code
+        vendors: [
+            'babel-polyfill',
+            'vue',
+            'vue-router',
+            'vuex'
+        ]
     };
 
     var output = {
@@ -123,7 +128,7 @@ module.exports = function (env) {
     var plugins = [
         // 将公共库(vendor)和应用程序代码分离开来，并创建一个显式的 vendor chunk 以防止它频繁更改
         new webpack.optimize.CommonsChunkPlugin({
-            name: ["vendor", "manifest"], // vendor libs   extracted manifest
+            name: ["vendors", "manifest"], // vendor libs   extracted manifest
             minChunks: Infinity,
         }),
 
@@ -173,7 +178,7 @@ module.exports = function (env) {
             inject: 'true',
 
             // 需要依赖的模块
-            chunks: ['index', 'vendor', 'manifest'],
+            chunks: ['index', 'vendors', 'manifest'],
 
             // 根据依赖自动排序
             chunksSortMode: 'dependency'

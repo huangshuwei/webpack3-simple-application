@@ -1,4 +1,44 @@
-body{
-    color:red;
-    font-size:30px;
+body {
+    margin: 0;
+    padding: 0;
+    position: relative;
 }
+
+/*左侧菜单 start*/
+
+.left-bar{
+    position: fixed;
+    left: 0;
+    width: 180px;
+    overflow: auto;
+    background-color: orange;
+    top:0;
+    bottom: 0;
+    right: 0;
+
+}
+
+.left-bar-menu{
+    width:100%;
+    transition: all .28s ease-out;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    overflow-y: auto;
+
+}
+/*左侧菜单 end*/
+
+
+/*内容区域 start*/
+.content{
+    margin: 0 0 0 180px;
+    min-height: 500px;
+    height: auto;
+    overflow: hidden;
+
+}
+
+
+/*内容区域 end*/
